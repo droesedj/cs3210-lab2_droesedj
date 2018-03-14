@@ -129,16 +129,31 @@ matrix matrix::operator+(const matrix& rhs) const
 
 matrix matrix::operator*(const matrix& rhs) const
 {
-	// stub
-	matrix retVal(rhs);
+	// TODO
+	if(cols != rhs.rows){
+		throw matrixException("Attempted to multiply incompatible matrices.");
+	}
+
+	matrix retVal(cols,rhs.rows);
+
+	for(int i = 0; i < rows; i++){
+		for(int j = 0; j < rhs.cols; j++){
+			int sum = 0;
+			for(int k = 0; k < cols; k++){
+				sum = sum + (the_matrix[i][k] * rhs[k][j]);
+			}
+		retVal[i][j] = sum;
+		}
+	}
+
 	return retVal;
 }
 
 matrix matrix::operator*(const double scale) const
 {
-	// stub
 	matrix retVal(*this);
 
+	// Multiply every entry in the matrix by the scale.
 	for(unsigned int x = 0; x < cols; x++){
 		for(unsigned int y = 0; y < rows; y++){
 			retVal[x][y] = the_matrix[x][y] * scale;
@@ -152,8 +167,15 @@ matrix matrix::operator*(const double scale) const
 // Unary operations
 matrix matrix::operator~() const
 {
-	// stub
-	matrix retVal(*this);
+	matrix retVal(cols, rows);
+
+	// Swap the axis of the matrix.
+	for(unsigned int x = 0; x < cols; x++){
+		for(unsigned int y = 0; y < rows; y++){
+			retVal[y][x] = the_matrix[x][y];
+		}
+	}
+
 	return retVal;
 }
 	
@@ -231,7 +253,6 @@ std::ostream& operator<<(std::ostream& os, const matrix& rhs)
 // Global scalar multiplication
 matrix operator*(const double scale, const matrix& rhs)
 {
-	// stub
 	matrix retval(rhs);
 	retval = retval * scale;
 	return retval;
