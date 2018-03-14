@@ -9,6 +9,8 @@ int main(void)
 	
 	matrix m1(3,3);
 	
+	m1[2][1] = 20.5;
+
 	cout << "m1 - should be all zeros" << endl;
 	cout << m1 << endl;
 	
@@ -32,5 +34,15 @@ int main(void)
 		cout << "m4 - exception expected and thrown" << endl;
 	}
 	
+	matrix m5(2,2);
+	m5[0][0] = 1; m5[1][0] = 1; m5[0][1] = 2; m5[1][1] = 3;
+	cout << "m5 - should be 2 x 2 identity matrix" << endl;
+	cout << m5 << endl;
+
+	matrix m6(2,2);
+	m6 = m5 * 10;
+	cout << "m6 - should be the value of m2*10" << endl;
+	cout << m6 << endl;
+
 	return 0;
 }		

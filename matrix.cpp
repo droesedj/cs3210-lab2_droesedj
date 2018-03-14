@@ -1,3 +1,11 @@
+/**
+ *	LAB WEEK 2: MATRIX CLASS
+ *	CS3210
+ *	@author Dennis Droese
+ *	@date March 14, 2018
+ */
+
+
 #include "matrix.h"
 #include <string>
 #include <cmath>
@@ -8,27 +16,87 @@ matrix::matrix(unsigned int rows, unsigned int cols):rows(rows),cols(cols)
 	if (rows < 1 || cols < 1)
 	{
 		throw matrixException("p-constructor bad arguments");
+	} else {
+
+		the_matrix = new double*[cols];
+
+		for(unsigned int i = 0; i < cols; i++){
+			the_matrix[i] = new double[rows];
+		}
+
+		clear();
 	}
-	
-	// more to do...
 }
 
 // Copy constructor
 matrix::matrix(const matrix& from):rows(from.rows),cols(from.cols)
 {
-	// stub
+	if (rows < 1 || cols < 1)
+	{
+		throw matrixException("p-constructor bad arguments");
+	} else {
+
+		the_matrix = new double*[cols];
+
+		for(unsigned int i = 0; i < cols; i++){
+			the_matrix[i] = new double[rows];
+		}
+
+		clear();
+	}
+
+	// Copy all of the data of the old matrix to the new one.
+	for(unsigned int x = 0; x < cols; x++){
+		for(unsigned int y = 0; y < rows; y++){
+			the_matrix[x][y] = from.the_matrix[x][y];
+		}
+	}
 }
 
 // Destructor
 matrix::~matrix()
 {
-	// stub
+	//Make sure there is actually something to delete...
+	if(the_matrix != nullptr){
+		for(unsigned int i = 0; i < cols; i++){
+			delete the_matrix[i];
+		}
+
+		delete the_matrix;
+	}
 }
 
 // Assignment operator
 matrix& matrix::operator=(const matrix& rhs)
 {
-	// stub
+
+	// Delete the existing matrix since it's getting reassigned.
+	if(the_matrix != nullptr){
+		for(unsigned int i = 0; i < cols; i++){
+			delete the_matrix[i];
+		}
+
+		delete the_matrix;
+	}
+
+	the_matrix = new double*[cols];
+
+	for(unsigned int i = 0; i < cols; i++){
+		the_matrix[i] = new double[rows];
+	}
+
+	clear();
+
+	rows = rhs.rows;
+	cols = rhs.cols;
+
+	// Copy all of the data of the old matrix to the new one.
+	for(unsigned int x = 0; x < cols; x++){
+		for(unsigned int y = 0; y < rows; y++){
+			the_matrix[x][y] = rhs.the_matrix[x][y];
+		}
+	}
+
 	return *this;
 }
 
@@ -43,8 +111,18 @@ matrix matrix::identity(unsigned int size)
 // Binary operations
 matrix matrix::operator+(const matrix& rhs) const
 {
-	// stub
+	if(rhs.rows != rows || rhs.cols != cols){
+		throw matrixException("Attempted to add two matrices with different sizes!");
+	}
+
 	matrix retVal(rhs);
+
+	for(unsigned int x = 0; x < cols; x++){
+		for(unsigned int y = 0; y < rows; y++){
+			retVal[x][y] = retVal[x][y] + the_matrix[x][y];
+		}
+	}
+
 	return retVal;
 }
 
@@ -60,6 +138,13 @@ matrix matrix::operator*(const double scale) const
 {
 	// stub
 	matrix retVal(*this);
+
+	for(unsigned int x = 0; x < cols; x++){
+		for(unsigned int y = 0; y < rows; y++){
+			retVal[x][y] = the_matrix[x][y] * scale;
+		}
+	}
+
 	return retVal;
 }
 
@@ -75,26 +160,63 @@ matrix matrix::operator~() const
 
 void matrix::clear()
 {
-	// stub
+	// make sure there are valid doubles to clear.
+	if(rows == 0 || cols == 0 || the_matrix == nullptr){
+		return;
+	}
+
+	double* ptr;
+
+	for(unsigned int x = 0; x < cols; x++){
+		ptr = the_matrix[x];
+		for(unsigned int y = 0; y < rows; y++){
+			ptr[y] = 0.0;
+		}
+	}
+
 	return;
 }
 
 double* matrix::operator[](unsigned int row)
 {
-	// stub
-	return NULL;
+	if(the_matrix[row] == nullptr) {
+		throw matrixException("Specified index out of range.");
+	}
+
+	return the_matrix[row];
 }
 
 double* matrix::operator[](unsigned int row) const
 {
-	// stub
-	return NULL;
+	if(the_matrix[row] == nullptr) {
+		throw matrixException("Specified index out of range.");
+	}
+
+	return the_matrix[row];
 }
 
 
 std::ostream& matrix::out(std::ostream& os) const
 {
-	// stub
+	if(the_matrix == nullptr || rows == 0 || cols == 0){
+		os << "Empty or invalid matrix.\n";
+	} else {
+	os << '[';
+
+	for(unsigned int y = 0; y < rows; y++){
+		os << "[\t";
+		for(unsigned int x = 0; x < cols; x++){
+			os << (double)(the_matrix[x][y]) << '\t';
+		}
+		os << ']';
+
+		if(y < rows - 1){
+			os << '\n';
+		}
+	}
+
+	os << "]\n";
+	}
 	return os;	
 }
 
@@ -103,9 +225,7 @@ std::ostream& matrix::out(std::ostream& os) const
 // Global insertion and operator
 std::ostream& operator<<(std::ostream& os, const matrix& rhs)
 {
-	// stub
-	os << "todo";
-	return os;
+	return rhs.out(os);
 }
 
 // Global scalar multiplication
@@ -113,6 +233,7 @@ matrix operator*(const double scale, const matrix& rhs)
 {
 	// stub
 	matrix retval(rhs);
+	retval = retval * scale;
 	return retval;
 }
 
