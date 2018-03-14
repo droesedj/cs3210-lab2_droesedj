@@ -33,7 +33,7 @@ int main(void)
 		matrix m4(0,0);	// should throw
 		cout << "m4 - exception not thrown (but should have)" << endl;
 	}
-	catch (matrixException me)
+	catch (matrixException)
 	{
 		cout << "m4 - exception expected and thrown" << endl;
 	}
@@ -63,6 +63,22 @@ int main(void)
 	cout << "m9 - should be the transpose of m2" << endl;
 	cout << m9 << endl;
 
+	matrix m10 = m5 * m6;
+	cout << "m10 - should be the product of m5*m6" << endl;
+	cout << m10 << endl;
+
+	try{
+		matrix m11 = m8 * m10;
+		cout << "m11 - product of incompatible matrices m8*m10, did not throw." << endl;
+	} catch(matrixException){
+		cout << "m11 - product of incompatible matrices m8*m10, properly threw." << endl;
+	}
+	try{
+		matrix m12 = m8 + m10;
+		cout << "m12 - sum of incompatible matrices m8+m10, did not throw." << endl;
+	} catch(matrixException){
+		cout << "m12 - sum of incompatible matrices m8+m10, properly threw." << endl;
+	}
 
 	return 0;
 }		

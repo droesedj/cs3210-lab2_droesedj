@@ -129,17 +129,16 @@ matrix matrix::operator+(const matrix& rhs) const
 
 matrix matrix::operator*(const matrix& rhs) const
 {
-	// TODO
 	if(cols != rhs.rows){
 		throw matrixException("Attempted to multiply incompatible matrices.");
 	}
 
 	matrix retVal(cols,rhs.rows);
 
-	for(int i = 0; i < rows; i++){
-		for(int j = 0; j < rhs.cols; j++){
+	for(unsigned int i = 0; i < rows; i++){
+		for(unsigned int j = 0; j < rhs.cols; j++){
 			int sum = 0;
-			for(int k = 0; k < cols; k++){
+			for(unsigned int k = 0; k < cols; k++){
 				sum = sum + (the_matrix[i][k] * rhs[k][j]);
 			}
 		retVal[i][j] = sum;
