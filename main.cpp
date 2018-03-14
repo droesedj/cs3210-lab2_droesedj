@@ -11,7 +11,7 @@ int main(void)
 	
 	m1[2][1] = 20.5;
 
-	cout << "m1 - should be all zeros" << endl;
+	cout << "m1 - should be mostly zeros, (2,1) is 20.5" << endl;
 	cout << m1 << endl;
 	
 	matrix m2 = matrix::identity(3);
@@ -20,12 +20,12 @@ int main(void)
 	m2[2][0] = 7; m2[2][1] = 8; m2[2][2] = 9;
 
 
-	cout << "m2 - should be 3 x 3 identity matrix" << endl;
+	cout << "m2 - should be 3 x 3 identity matrix with a bunch of values" << endl;
 	cout << m2 << endl;
 
 	matrix m3 = m1 + m2;
 
-	cout << "m3 - should be 3 x 3 identity matrix" << endl;
+	cout << "m3 - should be 3 x 3 identity matrix, the sum of m1 and m2" << endl;
 	cout << m3 << endl;
 	
 	try
