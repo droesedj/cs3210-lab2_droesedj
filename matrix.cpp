@@ -18,10 +18,10 @@ matrix::matrix(unsigned int rows, unsigned int cols):rows(rows),cols(cols)
 		throw matrixException("p-constructor bad arguments");
 	} else {
 
-		the_matrix = new double*[cols];
+		the_matrix = new double*[rows];
 
-		for(unsigned int i = 0; i < cols; i++){
-			the_matrix[i] = new double[rows];
+		for(unsigned int i = 0; i < rows; i++){
+			the_matrix[i] = new double[cols];
 		}
 
 		clear();
@@ -36,18 +36,18 @@ matrix::matrix(const matrix& from):rows(from.rows),cols(from.cols)
 		throw matrixException("p-constructor bad arguments");
 	} else {
 
-		the_matrix = new double*[cols];
+		the_matrix = new double*[rows];
 
-		for(unsigned int i = 0; i < cols; i++){
-			the_matrix[i] = new double[rows];
+		for(unsigned int i = 0; i < rows; i++){
+			the_matrix[i] = new double[cols];
 		}
 
 		clear();
 	}
 
 	// Copy all of the data of the old matrix to the new one.
-	for(unsigned int x = 0; x < cols; x++){
-		for(unsigned int y = 0; y < rows; y++){
+	for(unsigned int x = 0; x < rows; x++){
+		for(unsigned int y = 0; y < cols; y++){
 			the_matrix[x][y] = from.the_matrix[x][y];
 		}
 	}
@@ -58,11 +58,11 @@ matrix::~matrix()
 {
 	//Make sure there is actually something to delete...
 	if(the_matrix != nullptr){
-		for(unsigned int i = 0; i < cols; i++){
-			delete the_matrix[i];
+		for(unsigned int i = 0; i < rows; i++){
+			delete[] the_matrix[i];
 		}
 
-		delete the_matrix;
+		delete[] the_matrix;
 	}
 }
 
@@ -72,17 +72,17 @@ matrix& matrix::operator=(const matrix& rhs)
 
 	// Delete the existing matrix since it's getting reassigned.
 	if(the_matrix != nullptr){
-		for(unsigned int i = 0; i < cols; i++){
+		for(unsigned int i = 0; i < rows; i++){
 			delete the_matrix[i];
 		}
 
 		delete the_matrix;
 	}
 
-	the_matrix = new double*[cols];
+	the_matrix = new double*[rows];
 
-	for(unsigned int i = 0; i < cols; i++){
-		the_matrix[i] = new double[rows];
+	for(unsigned int i = 0; i < rows; i++){
+		the_matrix[i] = new double[cols];
 	}
 
 	clear();
@@ -91,8 +91,8 @@ matrix& matrix::operator=(const matrix& rhs)
 	cols = rhs.cols;
 
 	// Copy all of the data of the old matrix to the new one.
-	for(unsigned int x = 0; x < cols; x++){
-		for(unsigned int y = 0; y < rows; y++){
+	for(unsigned int x = 0; x < rows; x++){
+		for(unsigned int y = 0; y < cols; y++){
 			the_matrix[x][y] = rhs.the_matrix[x][y];
 		}
 	}
@@ -117,8 +117,8 @@ matrix matrix::operator+(const matrix& rhs) const
 
 	matrix retVal(rhs);
 
-	for(unsigned int x = 0; x < cols; x++){
-		for(unsigned int y = 0; y < rows; y++){
+	for(unsigned int x = 0; x < rows; x++){
+		for(unsigned int y = 0; y < cols; y++){
 			retVal[x][y] = retVal[x][y] + the_matrix[x][y];
 		}
 	}
@@ -139,9 +139,9 @@ matrix matrix::operator*(const matrix& rhs) const
 		for(unsigned int j = 0; j < rhs.cols; j++){
 			int sum = 0;
 			for(unsigned int k = 0; k < cols; k++){
-				sum = sum + (the_matrix[k][i] * rhs[j][k]);
+				sum = sum + (the_matrix[i][k] * rhs[k][j]);
 			}
-			retVal[j][i] = sum;
+			retVal[i][j] = sum;
 		}
 	}
 
@@ -153,8 +153,8 @@ matrix matrix::operator*(const double scale) const
 	matrix retVal(*this);
 
 	// Multiply every entry in the matrix by the scale.
-	for(unsigned int x = 0; x < cols; x++){
-		for(unsigned int y = 0; y < rows; y++){
+	for(unsigned int x = 0; x < rows; x++){
+		for(unsigned int y = 0; y < cols; y++){
 			retVal[x][y] = the_matrix[x][y] * scale;
 		}
 	}
@@ -171,7 +171,7 @@ matrix matrix::operator~() const
 	// Swap the axis of the matrix.
 	for(unsigned int x = 0; x < cols; x++){
 		for(unsigned int y = 0; y < rows; y++){
-			retVal[y][x] = the_matrix[x][y];
+			retVal[x][y] = the_matrix[y][x];
 		}
 	}
 
@@ -188,9 +188,9 @@ void matrix::clear()
 
 	double* ptr;
 
-	for(unsigned int x = 0; x < cols; x++){
+	for(unsigned int x = 0; x < rows; x++){
 		ptr = the_matrix[x];
-		for(unsigned int y = 0; y < rows; y++){
+		for(unsigned int y = 0; y < cols; y++){
 			ptr[y] = 0.0;
 		}
 	}
@@ -200,8 +200,12 @@ void matrix::clear()
 
 double* matrix::operator[](unsigned int row)
 {
-	if(the_matrix[row] == nullptr) {
-		throw matrixException("Specified index out of range.");
+
+
+	for(unsigned int x = 0; x < row; x++){
+		if(the_matrix[x] == nullptr) {
+			throw matrixException("Specified index out of range.");
+		}
 	}
 
 	return the_matrix[row];
@@ -209,8 +213,10 @@ double* matrix::operator[](unsigned int row)
 
 double* matrix::operator[](unsigned int row) const
 {
-	if(the_matrix[row] == nullptr) {
-		throw matrixException("Specified index out of range.");
+	for(unsigned int x = 0; x < row; x++){
+		if(the_matrix[x] == nullptr) {
+			throw matrixException("Specified index out of range.");
+		}
 	}
 
 	return the_matrix[row];
@@ -224,14 +230,14 @@ std::ostream& matrix::out(std::ostream& os) const
 	} else {
 	os << '[';
 
-	for(unsigned int y = 0; y < rows; y++){
+	for(unsigned int x = 0; x < rows; x++){
 		os << "[\t";
-		for(unsigned int x = 0; x < cols; x++){
+		for(unsigned int y = 0; y < cols; y++){
 			os << (double)(the_matrix[x][y]) << '\t';
 		}
 		os << ']';
 
-		if(y < rows - 1){
+		if(x < rows - 1){
 			os << '\n';
 		}
 	}

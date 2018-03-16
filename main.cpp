@@ -49,7 +49,7 @@ int main(void)
 	cout << m6 << endl;
 
 	matrix m7(1,2);
-	m7[0][0] = 1; m7[1][0] = 2;
+	m7[0][0] = 1; m7[0][1] = 2;
 
 	cout << "m7 - should be a 1x2 matrix" << endl;
 	cout << m7 << endl;
@@ -82,14 +82,14 @@ int main(void)
 
 	try{
 	matrix m13(2,3);
-	m13[0][0]=1; m13[1][0]=2; m13[2][0]=3;
-	m13[0][1]=4; m13[1][1]=3; m13[2][1]=2;
+	m13[0][0]=1; m13[0][1]=2; m13[0][2]=3;
+	m13[1][0]=4; m13[1][1]=3; m13[1][2]=2;
 
 	cout << "m13 - should be a 3x2 matrix" << endl;
 			cout << m13 << endl;
 
 	matrix m14(3,1);
-	m14[0][0] = 11; m14[0][1] = 13; m14[0][2] = 15;
+	m14[0][0] = 11; m14[1][0] = 13; m14[2][0] = 15;
 
 	cout << "m14 - should be a 1x3 matrix" << endl;
 				cout << m14 << endl;
@@ -101,6 +101,14 @@ int main(void)
 
 	} catch(matrixException e){
 		cout << "Didn't work";
+	}
+
+	try{
+		matrix m17(2,2);
+		m17[5][200] = 99.99999;
+		cout << "m17 - 2x2, attempted to access (5,200), did not throw." << endl;
+	} catch(matrixException e){
+		cout << "m17 - 2x2, attempted to access (5,200), threw properly." << endl;
 	}
 
 	return 0;
