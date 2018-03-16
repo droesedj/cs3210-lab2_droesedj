@@ -80,5 +80,28 @@ int main(void)
 		cout << "m12 - sum of incompatible matrices m8+m10, properly threw." << endl;
 	}
 
+	try{
+	matrix m13(2,3);
+	m13[0][0]=1; m13[1][0]=2; m13[2][0]=3;
+	m13[0][1]=4; m13[1][1]=3; m13[2][1]=2;
+
+	cout << "m13 - should be a 3x2 matrix" << endl;
+			cout << m13 << endl;
+
+	matrix m14(3,1);
+	m14[0][0] = 11; m14[0][1] = 13; m14[0][2] = 15;
+
+	cout << "m14 - should be a 1x3 matrix" << endl;
+				cout << m14 << endl;
+
+	matrix m16 = m13 * m14;
+
+	cout << "m16 - should be the product of m13*m14" << endl;
+		cout << m16 << endl;
+
+	} catch(matrixException e){
+		cout << "Didn't work";
+	}
+
 	return 0;
 }		

@@ -133,15 +133,15 @@ matrix matrix::operator*(const matrix& rhs) const
 		throw matrixException("Attempted to multiply incompatible matrices.");
 	}
 
-	matrix retVal(cols,rhs.rows);
+	matrix retVal(rows,rhs.cols);
 
 	for(unsigned int i = 0; i < rows; i++){
 		for(unsigned int j = 0; j < rhs.cols; j++){
 			int sum = 0;
 			for(unsigned int k = 0; k < cols; k++){
-				sum = sum + (the_matrix[i][k] * rhs[k][j]);
+				sum = sum + (the_matrix[k][i] * rhs[j][k]);
 			}
-		retVal[i][j] = sum;
+			retVal[j][i] = sum;
 		}
 	}
 
